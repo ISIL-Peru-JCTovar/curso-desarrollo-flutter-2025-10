@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'ISIL Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -28,9 +28,34 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+                        seedColor: const Color.fromARGB(255, 53, 105, 4),
+                        brightness: Brightness.dark
+                      ),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.amber
+          ),
+          headlineMedium: TextStyle(
+            fontSize: 48.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.amber
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 18.0,
+            color: Color.fromARGB(255, 203, 226, 72))
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 221, 80, 15),
+            foregroundColor: Colors.white,
+            textStyle: const TextStyle(fontSize: 18.0)
+          )
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'ISIL Demo Flutter - Sesion N° 1'),
     );
   }
 }
@@ -89,26 +114,15 @@ class _MyHomePageState extends State<MyHomePage> {
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('You have pushed the button this many times:'),
+            const Text('Has pulsado el boton varias veces:'),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const Text('ISIL'),
+            const AutocompleteBasicExample()
           ],
         ),
       ),
@@ -117,6 +131,30 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class AutocompleteBasicExample extends StatelessWidget {
+
+  const AutocompleteBasicExample({super.key});
+
+  static const List<String> _kOptions = <String>['Richard Vargas', 'Sebastian Montoya', 'Josue Ramirez'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Autocomplete<String>(
+      optionsBuilder: (TextEditingValue textEditingValue) {
+        if (textEditingValue.text == '') {
+          return const Iterable<String>.empty();
+        }
+        return _kOptions.where((String option) {
+          return option.contains(textEditingValue.text.toLowerCase());
+        });
+      },
+      onSelected: (String selection) {
+        debugPrint('Has elegido: $selection');
+      },
     );
   }
 }
