@@ -3,6 +3,7 @@ import 'package:isil_demo_app_1/ejemplos002.dart';
 import 'package:isil_demo_app_1/ejemplos003.dart';
 import 'package:isil_demo_app_1/ejemplos004.dart';
 import 'package:isil_demo_app_1/ejemplos005.dart';
+import 'package:isil_demo_app_1/ejemplos006.dart';
 
 void main() {
   //-- Ejemplos N° 1: Tipos de datos y Null Safety
@@ -20,5 +21,8 @@ void main() {
   //-- Ejemplos N° 5: Uso de funciones
   Ejemplos005 ejemplos5 = Ejemplos005();
   ejemplos5.ejecutar();
+  //-- Ejemplos N° 6: Programacion Orientada a Objetos (POO)
+  Ejemplos006 ejemplos6 = Ejemplos006();
+  ejemplos6.ejecutar();
 }
 
