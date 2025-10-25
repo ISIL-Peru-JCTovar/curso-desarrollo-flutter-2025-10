@@ -1,0 +1,82 @@
+{
+  "clientes": [
+    {
+      "id": "1",
+      "nombres": "Juan",
+      "apellidos": "Perez",
+      "edad": 30,
+      "correo": "juan.perez@example.com",
+      "pais": "Peru",
+      "deseaPublicidad": true,
+      "sexo": "M",
+      "nivelSatisfaccion": 4,
+      "fotoUrl": "-",
+      "fotoPath": "-"
+    },
+    {
+      "id": "2",
+      "nombres": "Maria",
+      "apellidos": "Jimenez",
+      "edad": 24,
+      "correo": "mariajimenez@gmail.com",
+      "pais": "Argentina",
+      "deseaPublicidad": false,
+      "sexo": "F",
+      "nivelSatisfaccion": 3,
+      "fotoUrl": "-",
+      "fotoPath": "-"
+    },
+    {
+      "id": "3",
+      "nombres": "Romulo",
+      "apellidos": "Manzanares",
+      "edad": 45,
+      "correo": "rmanzanares@hotmail.com",
+      "pais": "Brasil",
+      "deseaPublicidad": false,
+      "sexo": "M",
+      "nivelSatisfaccion": 2,
+      "fotoUrl": "-",
+      "fotoPath": "-"
+    },
+    {
+      "id": "4",
+      "nombres": "Adela",
+      "apellidos": "Gonzales",
+      "edad": 28,
+      "correo": "adela1995@live.com",
+      "pais": "Chile",
+      "deseaPublicidad": true,
+      "sexo": "F",
+      "nivelSatisfaccion": 1,
+      "fotoUrl": "-",
+      "fotoPath": "-"
+    },
+    {
+      "id": "6",
+      "nombres": "Juliana",
+      "apellidos": "Roberts",
+      "edad": 54,
+      "correo": "julianaronerts@gmail.com",
+      "pais": "Estados Unidos",
+      "deseaPublicidad": true,
+      "sexo": "F",
+      "nivelSatisfaccion": 3,
+      "fotoUrl": "https://randomuser.me/api/portraits/men/90.jpg",
+      "fotoPath": null
+    },
+    {
+      "id": "1157",
+      "nombres": "Francisca",
+      "apellidos": "Zavaleta",
+      "edad": 30,
+      "correo": "fra.zalava.123@outlook.com",
+      "pais": "Canada",
+      "deseaPublicidad": true,
+      "sexo": "F",
+      "nivelSatisfaccion": 3,
+      "fotoUrl": "https://randomuser.me/api/portraits/men/90.jpg",
+      "fotoPath": ""
+    }
+  ]
+}

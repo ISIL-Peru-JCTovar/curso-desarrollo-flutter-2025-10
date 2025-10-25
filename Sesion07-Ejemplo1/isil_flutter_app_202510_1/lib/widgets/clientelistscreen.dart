@@ -1,0 +1,210 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:isil_flutter_app_202510_1/model/cliente.dart';
+import 'package:isil_flutter_app_202510_1/repositories/clienteapirepository.dart';
+import 'package:isil_flutter_app_202510_1/repositories/clienterepository.dart';
+
+//Pantalla de lista de clientes
+
+class ClienteListScreen extends StatefulWidget {
+
+  @override
+  State<ClienteListScreen> createState() => _ClienteListScreenState();
+  
+}
+
+class _ClienteListScreenState extends State<ClienteListScreen> {
+
+  //ClienteRepository clienteRepository = ClienteRepository();
+  ClienteApiRepository clienteRepository = ClienteApiRepository();
+  double _scale = 1.5;
+  double _previousScale = 1.5;
+  List<Cliente> clientes = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('ISIL-CRM: Lista Clientes'),
+      ),
+      body: RefreshIndicator(
+        onRefresh: _refrescarListaClientes,
+        child: Column(children: [
+                        //-- Encabezado de la lista
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              // Acción al tocar el encabezado (opcional)
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Encabezado de la lista tocado')),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade100,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: Center(
+                                child: Text('Lista de Clientes (tap aqui interactivo)'),
+                              ),
+                            ),
+                          ),
+                        ),
+                        //-- La lista expandida
+                        Expanded(
+                          child: FutureBuilder<List<Cliente>>(
+                            future: clienteRepository.findAll(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Center(child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(child: Text('Error: ${snapshot.error}'));
+                              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                return Center(child: Text('No hay clientes disponibles.'));
+                              } else {
+                                final clientes = snapshot.data!;
+                                return ListView.builder(
+                                    itemCount: clientes.length,
+                                    itemBuilder: (context, index) {
+                                      final cliente = clientes[index];
+                                      return ListTile(
+                                        leading: CircleAvatar(
+                                        backgroundImage: cliente.fotoPath != null
+                                          ? FileImage(File(cliente.fotoPath!))
+                                          : NetworkImage('https://via.placeholder.com/100') as ImageProvider,
+                                      ),
+                                        title: Text('${cliente.nombres} ${cliente.apellidos}'),
+                                        subtitle: Text(cliente.correo),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(Icons.edit),
+                                              tooltip: 'Editar',
+                                              onPressed: () {
+                                                // Editar el cliente (implementar lógica)
+                                                _irAFormulario('editar', cliente: cliente, id: cliente.id);
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: Icon(Icons.delete),
+                                              tooltip: 'Eliminar',
+                                              onPressed: () {
+                                                // Eliminar el cliente (implementar lógica)
+                                                final int id = cliente.id;
+                                                _eliminarClienteConConfirmacion(id);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          // Navegar a la pantalla de detalles del cliente
+                                          // Navigator.pushNamed(context, '/detalles', arguments: cliente);
+                                        },
+                                      );
+                                    },
+                                  );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navegar a la pantalla de creación de nuevo cliente
+          _irAFormulario('crear');
+        },
+        tooltip: 'Agregar Cliente',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+  
+  void _irAFormulario(String metodo, { Cliente? cliente, int? id }) {
+    //Navigator.pushNamed(context, '/crear'); //NO
+    Navigator.pushNamed(
+        context, 
+        '/$metodo',
+        arguments: cliente != null ? {'cliente': cliente, 'id': id} : null,
+      ).then((resultado) {
+      if (resultado != null && resultado is Map) {
+        Cliente clienteDeForm = resultado['cliente'];
+        int? id = resultado['id'];
+        if (clienteDeForm != null) {
+          setState(() {
+            if (id != null) {
+              //Editar
+              clienteRepository.update(id, clienteDeForm);
+            } else {
+              //Crear
+              clienteRepository.add(clienteDeForm);
+            }
+          });
+        }
+      }
+    });
+  }
+
+  Future<bool?> _mostrarConfirmacionEliminar(BuildContext context, Cliente c) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: Text('Confirmar eliminación'),
+          content: Text('¿Estás seguro de que deseas eliminar a ${c.nombres} ${c.apellidos}?'),
+          actions: [
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(ctx).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Eliminar', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(ctx).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _eliminarClienteConConfirmacion(int id) async {
+    final Cliente cliente = await clienteRepository.find(id);
+    //final cliente = clienteRepository.find(index);
+    final confirmado = await _mostrarConfirmacionEliminar(context, cliente);
+    if (confirmado == true) {
+      setState(() {
+        clienteRepository.delete(id);
+      });
+      // Opcional: mostrar Snackbar o Toast de “Cliente eliminado”
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Cliente eliminado')),
+      );
+    }
+  }
+
+
+  Future<void> _refrescarListaClientes() async {
+    // Si estás usando API:
+    try {
+      final nuevaLista = await clienteRepository.findAll();
+      setState(() {
+        clientes = nuevaLista;
+      });
+    } catch (e) {
+      // Manejar error (mostrar snackbar, etc)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al refrescar: $e')),
+      );
+    }
+  }
+
+}
